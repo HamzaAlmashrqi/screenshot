@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
@@ -114,13 +113,14 @@ class _MyHomePageState extends State<MyHomePage> {
           _imageFile = null;
           screenshotController
               .capture(delay: Duration(milliseconds: 10))
-              .then((File image) async {
+              .then((bytes) async {
             //print("Capture Done");
+            final _file = File('');
+            _file.writeAsBytesSync(bytes);
             setState(() {
-              _imageFile = image;
+              _imageFile = _file;
             });
-            final result =
-                await ImageGallerySaver.save(image.readAsBytesSync());
+            final result = await ImageGallerySaver.saveImage(bytes);
             print("File Saved to Gallery");
           }).catchError((onError) {
             print(onError);
@@ -133,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _saved(File image) async {
-    final result = await ImageGallerySaver.save(image.readAsBytesSync());
+    final result = await ImageGallerySaver.saveImage(image.readAsBytesSync());
     print("File Saved to Gallery");
   }
 }
